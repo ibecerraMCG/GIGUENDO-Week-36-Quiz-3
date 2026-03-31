@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 36 Practice Quiz 3</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }[data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }[data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }[data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 36 Practice Quiz 3</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData =[
+            // --- Section 1: Digestion and Absorption of Macronutrients ---
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO1: Describe the processes involved in the digestion and absorption of carbohydrates, lipids, and proteins – the location of digestion, the main digestive enzymes, and the transporters involved in the absorption and discuss the pharmacological intervention and pathophysiology of these processes.",
+                question: "A 55-year-old man with type 2 diabetes mellitus is prescribed a medication to help control his blood glucose levels. The physician explains that this medication works by preventing the breakdown of starch into sugar in the intestinal lumen. Shortly after starting the medication, the patient experiences stomach discomfort, bloating, gas, and mild diarrhea. Which of the following drugs was most likely prescribed?",
+                options: {
+                    A: "Acarbose",
+                    B: "Cholestyramine",
+                    C: "Lomitapide",
+                    D: "Omeprazole",
+                    E: "Orlistat"
+                },
+                correctAnswer: "A",
+                rationale: "Acarbose is an inhibitor of pancreatic amylase used to control blood glucose levels in people with type 2 diabetes. Common side effects include stomach discomfort, gas, bloating, and mild diarrhea because unabsorbed carbohydrates are metabolized by colonic bacteria.",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 10: 'Pharmacological Intervention of Carbohydrate Digestion Acarbose – • an inhibitor of pancreatic amylase • prescription drug that is used to control blood glucose levels in people with type 2 diabetes • more common side effects include – stomach discomfort, gas, bloating, mild diarrhea'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO1: Describe the processes involved in the digestion and absorption of carbohydrates, lipids, and proteins – the location of digestion, the main digestive enzymes, and the transporters involved in the absorption and discuss the pharmacological intervention and pathophysiology of these processes.",
+                question: "A researcher is studying the luminal phase of protein digestion in the stomach. She notes that chief cells secrete an inactive zymogen, pepsinogen, which must undergo limited proteolytic cleavage to become the active enzyme pepsin. Which of the following factors is primarily responsible for activating pepsinogen in the gastric lumen?",
+                options: {
+                    A: "Enteropeptidase",
+                    B: "Gastrin",
+                    C: "Hydrochloric acid (H+)",
+                    D: "Pancreatic amylase",
+                    E: "Vasoactive intestinal peptide"
+                },
+                correctAnswer: "C",
+                rationale: "Pepsinogen is secreted by chief cells in an inactive form. The acidic pH (hydrochloric acid/H+) in the stomach activates the enzyme by inducing limited proteolytic cleavage (autoactivation).",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 24: 'Digestion of Proteins • Gastric phase: acidic pH and pepsin • Pepsinogen activated to pepsin by H+'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO1: Describe the processes involved in the digestion and absorption of carbohydrates, lipids, and proteins – the location of digestion, the main digestive enzymes, and the transporters involved in the absorption and discuss the pharmacological intervention and pathophysiology of these processes.",
+                question: "A 40-year-old woman is prescribed a weight-loss medication that inhibits pancreatic lipase, thereby reducing fat digestion and absorption. She is warned that patient compliance is often low due to side effects like steatorrhea and fecal incontinence. Which of the following medications was prescribed?",
+                options: {
+                    A: "Acarbose",
+                    B: "Cholestyramine",
+                    C: "Lomitapide",
+                    D: "Olestra",
+                    E: "Orlistat"
+                },
+                correctAnswer: "E",
+                rationale: "Orlistat (Xenical, Alli) inhibits pancreatic lipase to induce weight loss. By reducing fat digestion, it can cause steatorrhea, anal leakage, and a risk for fat-soluble vitamin deficiency.",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 23: 'Pharmacological Intervention of Lipid Digestion • Orlistat (Xenical®, Alli®) – inhibits pancreatic lipase, used to induce weight loss... Patient compliance is low because of the side effects, which may include steatorrhea and fecal incontinence (anal leakage).'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO2: Explain the pathophysiology of some malabsorption syndromes (e.g., Zollinger-Ellison syndrome, celiac disease, tropical sprue, pancreatitis, cystic fibrosis, and lactose intolerance) that lead to decreased digestion and absorption of the major nutrients and their clinical consequences.",
+                question: "A 45-year-old man presents with chronic diarrhea and severe epigastric pain. Endoscopy reveals severe erosive esophagitis and multiple ulcers in the stomach and the second portion of the duodenum. Laboratory testing shows markedly elevated serum gastrin levels due to a gastrin-producing pancreatic tumor. The patient's diarrhea and malabsorption are primarily caused by which of the following mechanisms?",
+                options: {
+                    A: "Acid inactivation of pancreatic enzymes",
+                    B: "Autoimmune destruction of the intestinal brush border",
+                    C: "Decreased secretion of secretin",
+                    D: "Defective CFTR chloride channels",
+                    E: "Inspissation of pancreatic secretions"
+                },
+                correctAnswer: "A",
+                rationale: "In Zollinger-Ellison Syndrome, very high circulating gastrin levels lead to hypersecretion of HCl. The massive acid load entering the small intestine inactivates pancreatic enzymes, causing maldigestion, malabsorption, and diarrhea.",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 30: 'Zollinger-Ellison Syndrome (gastrin-producing pancreatic tumor): Because of very high circulating gastrin levels, patients have very high basal acid production... Diarrhea is due to hypersecretion of HCl (increased fluid load to small intestine) and acid inactivation of pancreatic enzymes causing malabsorption.'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO2: Explain the pathophysiology of some malabsorption syndromes (e.g., Zollinger-Ellison syndrome, celiac disease, tropical sprue, pancreatitis, cystic fibrosis, and lactose intolerance) that lead to decreased digestion and absorption of the major nutrients and their clinical consequences.",
+                question: "A 30-year-old woman presents with crampy abdominal pain, flatulence, bloating, and weight loss. She also reports an intensely itchy, symmetrical rash on her elbows and knees. A serologic test reveals the presence of IgA antibodies against tissue transglutaminase (tTG-IgA). Which of the following pathophysiologic processes best explains her gastrointestinal symptoms?",
+                options: {
+                    A: "Defective sodium-solute co-transporter (SGLT1)",
+                    B: "Gastrin-producing pancreatic tumor",
+                    C: "Gluten-induced enteropathy affecting the proximal small intestine",
+                    D: "Inactivating mutations in the lactase gene",
+                    E: "Inspissation of pancreatic secretions"
+                },
+                correctAnswer: "C",
+                rationale: "Celiac disease is a gluten-induced enteropathy that affects the proximal small intestine, impairing nutrient absorption. It is associated with dermatitis herpetiformis (rash on extensor surfaces) and IgA antibodies against tissue transglutaminase.",
+                source: "Digestion and Absorption of Macronutrients PDF, slides 30-31: 'Malabsorption Syndromes... Celiac disease: Gluten-induced enteropathy, affects proximal small intestine, decreases metal ion absorption, and usually associated with dermatitis... Serology positive for anti-tissue transglutaminase (anti tTG-IgA) and/or anti-gliadin (IgA or IgG)'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO2: Explain the pathophysiology of some malabsorption syndromes (e.g., Zollinger-Ellison syndrome, celiac disease, tropical sprue, pancreatitis, cystic fibrosis, and lactose intolerance) that lead to decreased digestion and absorption of the major nutrients and their clinical consequences.",
+                question: "A 25-year-old Asian man presents with severe bloating, flatulence, and watery diarrhea shortly after consuming dairy products. A hydrogen breath test is performed. Following an oral load of lactose, which of the following sets of findings is most likely to be observed in this patient?",
+                options: {
+                    A: "Decreased breath hydrogen and decreased blood glucose",
+                    B: "Decreased breath hydrogen and increased blood glucose",
+                    C: "Increased breath hydrogen and decreased blood glucose",
+                    D: "Increased breath hydrogen and increased blood glucose",
+                    E: "No change in breath hydrogen and increased blood glucose"
+                },
+                correctAnswer: "C",
+                rationale: "In lactase deficiency, an oral load of lactose fails to be digested and absorbed as glucose/galactose, leading to no increase (or a relative decrease/failure to rise) in blood glucose. The unabsorbed lactose reaches the colon where bacteria ferment it, causing a marked increase in breath hydrogen levels.",
+                source: "Digestion and Absorption of Macronutrients PDF, slides 34-35: 'Hydrogen Breath test: An oral load of lactose in a lactose-tolerant individual will increase blood levels of glucose with no increase in breath hydrogen levels; in contrast, an oral load of lactose will fail to increase blood levels of glucose in an individual with lactase deficiency... with a marked increase in breath hydrogen levels due to bacterial action on unabsorbed lactose'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO3: Explain the process of water and electrolyte secretion and absorption in the GI tract and discuss the various pathological states associated with the disruption of these two processes (cholera, traveler’s diarrhea, pancreatic cholera).",
+                question: "A 44-year-old man presents to the emergency department with profuse, watery diarrhea and severe dehydration. His blood pressure is 62/32 mmHg. An ECG demonstrates prominent U waves. Which of the following electrolyte abnormalities is the most direct cause of the ECG findings in this patient with severe diarrhea?",
+                options: {
+                    A: "Hypercalcemia",
+                    B: "Hypernatremia",
+                    C: "Hypocalcemia",
+                    D: "Hypokalemia",
+                    E: "Hyponatremia"
+                },
+                correctAnswer: "D",
+                rationale: "Severe diarrhea results in the loss of HCO3- and K+. The loss of potassium leads to hypokalemia, which manifests on an ECG as prominent U waves.",
+                source: "Digestion and Absorption of Macronutrients PDF, slides 52 & 54: 'Since loss of H+ takes place by vomiting, it results in metabolic alkolosis and diarrhea primarily results in loss of HCO3- and K+, it results in metabolic acidosis and hypokalemia.' and 'ECG demonstrates U waves on ECG (red arrows) that are significant for hypokalemia, which would be expected in a dehydrated patient with profuse diarrhea.'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO3: Explain the process of water and electrolyte secretion and absorption in the GI tract and discuss the various pathological states associated with the disruption of these two processes (cholera, traveler’s diarrhea, pancreatic cholera).",
+                question: "A patient develops severe secretory diarrhea due to a VIPoma (pancreatic cholera). Vasoactive intestinal peptide (VIP) causes an increase in intracellular cAMP in the intestinal crypt cells. This intracellular signal stimulates massive secretion of which of the following ions into the intestinal lumen, drawing water with it?",
+                options: {
+                    A: "Calcium",
+                    B: "Chloride",
+                    C: "Magnesium",
+                    D: "Potassium",
+                    E: "Sodium"
+                },
+                correctAnswer: "B",
+                rationale: "VIP increases intracellular cAMP, which stimulates the CFTR channel. This causes massive active secretion of chloride (Cl-) ions into the lumen. Sodium and water passively follow, resulting in severe secretory diarrhea.",
+                source: "Digestion and Absorption of Macronutrients PDF, page 42: 'The increase in cAMP, cGMP or intracellular Ca2+ will result in the inhibition of the Na+-H+ exchanger and the Cl--bicarbonate exchanger... and stimulation of Cl- secretion through the CFTR channel. This will result in increased NaCl concentrations in the intestinal lumen, which will draw water into the lumen and cause massive diarrhea.'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO4: Explain the characteristics of osmotic and secretory diarrhea and how fecal osmotic gap can be used to distinguish the two.",
+                question: "A 50-year-old man presents with chronic diarrhea. His stool volume is extremely large, watery, and explosive. The physician instructs the patient to fast for 24 hours, but the large-volume diarrhea persists without any decrease in output. Stool electrolyte analysis reveals a fecal osmotic gap of 15 mOsm/kg. Which of the following is the most likely underlying mechanism of this patient's diarrhea?",
+                options: {
+                    A: "Celiac disease",
+                    B: "Ingestion of magnesium hydroxide laxatives",
+                    C: "Lactose intolerance",
+                    D: "Secretory diarrhea",
+                    E: "Sorbitol ingestion"
+                },
+                correctAnswer: "D",
+                rationale: "Secretory diarrhea is characterized by large-volume watery stools that persist with fasting. Because the diarrhea is driven by active ion secretion rather than unabsorbed dietary osmolytes, the fecal osmotic gap is narrow (< 50 mOsm/kg). VIPoma, Cholera, and ETEC are classic causes. Osmotic diarrheas (like lactose intolerance or laxative use) stop with fasting and have a gap > 75-100 mOsm/kg.",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 44: 'Secretory vs Osmotic Diarrhea (High-Yield)... Secretory Diarrhea: Effect of fasting: Persists with fasting... Stool osmotic gap < 50 mOsm/kg... Typical causes: Cholera toxin, ETEC, VIPoma'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO4: Explain the characteristics of osmotic and secretory diarrhea and how fecal osmotic gap can be used to distinguish the two.",
+                question: "A 60-year-old woman complains of watery diarrhea. Stool analysis reveals a sodium concentration of 30 mEq/L and a potassium concentration of 40 mEq/L. Assuming a plasma osmolarity of 290 mOsm/kg, what is the patient's calculated fecal osmotic gap, and what type of diarrhea does this indicate?",
+                options: {
+                    A: "70 mOsm/kg; Secretory diarrhea",
+                    B: "140 mOsm/kg; Secretory diarrhea",
+                    C: "150 mOsm/kg; Osmotic diarrhea",
+                    D: "220 mOsm/kg; Osmotic diarrhea",
+                    E: "290 mOsm/kg; Exudative diarrhea"
+                },
+                correctAnswer: "C",
+                rationale: "The Fecal Osmotic Gap (FOG) = 290 – 2([Na+] +[K+]). FOG = 290 - 2(30 + 40) = 290 - 140 = 150 mOsm/kg. An osmotic gap > 50 mOsm/kg (and especially > 100 mOsm/kg) indicates osmotic diarrhea due to the presence of unabsorbed osmolytes.",
+                source: "Digestion and Absorption of Macronutrients PDF, slide 46: 'Fecal Osmotic Gap is defined as follows: FOG = 290 – 2{[Na+] + [K+]}... the normal osmotic gap is ~50 mOsm/kg. Since dietary-derived levels of unabsorbed osmolytes will be particularly high in osmotic diarrhea, the osmotic gap is >50 mOsm/kg and frequently far exceeds 100 mOsm/kg'"
+            },
+            {
+                section: "Digestion and Absorption of Macronutrients",
+                fullLO: "LO5: Discuss the pathologic consequences of nutritional deficiencies other than vitamin deficiencies, with emphasis on severe protein-energy malnutrition (Kwashiorkor & Marasmus) & essential fatty acids and discuss the pathologic states that have a significant impact on nutritional requirements.",
+                question: "A 3-year-old child is diagnosed with abetalipoproteinemia. Because this genetic defect prevents the proper formation of chylomicrons, the child exhibits severe fat malabsorption (steatorrhea). As a consequence of this ongoing steatorrhea, the child is at the greatest risk for developing a severe deficiency in which of the following?",
+                options: {
+                    A: "All fat-soluble vitamins",
+                    B: "Essential amino acids",
+                    C: "Short-chain fatty acids",
+                    D: "Vitamin B12",
+                    E: "Water-soluble vitamins (B and C)"
+                },
+                correctAnswer: "A",
+                rationale: "Patients with steatorrhea (due to conditions like abetalipoproteinemia, pancreatic failure, or bile insufficiency) primarily develop deficiencies of ALL fat-soluble vitamins (A, D, E, K) and corresponding deficiency symptoms.",
+                source: "Digestion and Absorption of Macronutrients slide deck PDF, slide 29: 'Pathophysiology of Digestion & Absorption Dietary lipids... Causes deficiency of fat-soluble vitamins, anal leakage, & “dumping”' and 'Patients with steatorrhea primarily develop deficiency of ALL fat-soluble vitamins and corresponding deficiency symptoms.'"
+            },
+
+            // --- Section 2: Odontogenic Infections ---
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO1: Detail the pathogenesis of dental caries, abscesses, and head and neck space infections.",
+                question: "A 14-year-old boy is brought to the dentist for a routine checkup. The dentist identifies several new dental caries. The pathogenesis of these lesions involves sugar-driven microbial growth and localized acidification leading to enamel demineralization. Which of the following organisms, along with Lactobacillus species, is primarily responsible for converting dietary sucrose into acetic and lactic acid in this process?",
+                options: {
+                    A: "Actinomyces israelii",
+                    B: "Aggregatibacter actinomycetemcomitans",
+                    C: "Fusobacterium nucleatum",
+                    D: "Mutans streptococci",
+                    E: "Treponema vincentii"
+                },
+                correctAnswer: "D",
+                rationale: "The pathogenesis of dental caries involves sugar-driven microbial growth where bacteria, primarily mutans streptococci and Lactobacillus spp, convert dietary sucrose into acetic and lactic acid. This localized acidification leads to tooth demineralization.",
+                source: "Odontogenic Infections PDF slide deck, slide 16: 'Caries: sugar-driven microbial growth... localized acidification -> demineralization... Lactobacillus spp & mutans strep: sucrose -> acetic & lactic acid'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO1: Detail the pathogenesis of dental caries, abscesses, and head and neck space infections.",
+                question: "An 18-year-old man comes to a physician because of a toothache involving a right maxillary molar for 2 weeks. He presents with swelling of the right side of his face. The physician determines that a dentoalveolar abscess has broken through the bone. Whether the resulting abscess presents strictly intraorally or expands extraorally is determined by the root's relation to the attachment of which of the following anatomical structures?",
+                options: {
+                    A: "Buccinator muscle",
+                    B: "Digastric muscle",
+                    C: "Mylohyoid muscle",
+                    D: "Platysma muscle",
+                    E: "Sternocleidomastoid muscle"
+                },
+                correctAnswer: "A",
+                rationale: "In upper (maxillary) or lower (mandibular) molar infections, the anatomic barriers of bone, muscle, and fascia determine the spread. Specifically, whether the abscess presents intraorally or extraorally depends on whether the thinnest part of the bone perforates inside or outside the origin/insertion of the buccinator muscle.",
+                source: "Odontogenic Infections Handout and slide deck PDF, page 3-4; Slide 24: 'Buccal space infections. 1. Potential space in the cheek, superficial to buccinator muscle & deep to the platysma & skin. 2. May present either intraorally or extraorally... 4. Outside origin & insertion of buccinators a. extraoral b. swelling... 5. Inside origin & insertion of buccinator -> findings intraoral'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO2: Give a synopsis of classic presentations of odontogenic infections.",
+                question: "A 20-year-old college sophomore goes to the dentist complaining of sore, swollen gums for three days, accompanied by fever, malaise, and halitosis. The gums bleed easily when brushed. On examination, the gingivae are diffusely swollen and red with blunted papillae covered by a gray pseudomembrane. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Actinomycosis",
+                    B: "Dental caries",
+                    C: "Ludwig's angina",
+                    D: "Periapical abscess",
+                    E: "Vincent's angina (NUG)"
+                },
+                correctAnswer: "E",
+                rationale: "Vincent's angina (NUG) presents acutely with fever, malaise, fetid breath (halitosis), bleeding gums, and interdental gingival necrosis often covered by a gray pseudomembrane. It is classically associated with stress and poor oral hygiene.",
+                source: "Odontogenic Infections slide deck PDF, slide 21: 'Gingivitis... acute, necrotizing, ulcerative gingivitis-- Vincent's angina... fever, malaise, halitosis, gray pseudomembrane, adenopathy'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO2: Give a synopsis of classic presentations of odontogenic infections.",
+                question: "A 51-year-old man comes to the dentist complaining of pain and swelling in the left mandibular region for three weeks. His teeth are in poor repair, and the left submandibular area is red, indurated, and mildly tender. Notably, there are several sinus tracts in the skin draining purulent material that contains yellowish \"sulfur\" granules. Which of the following organisms is the most likely cause of this infection?",
+                options: {
+                    A: "Actinomyces israelii",
+                    B: "Aggregatibacter actinomycetemcomitans",
+                    C: "Fusobacterium necrophorum",
+                    D: "Streptococcus mutans",
+                    E: "Treponema vincentii"
+                },
+                correctAnswer: "A",
+                rationale: "Actinomycosis, caused primarily by Actinomyces israelii, is an exception to the normal fascial plane boundaries. It spreads directly through tissue, skin, and bone, classically presenting with draining sinuses on the face/neck and purulent discharge containing \"sulfur granules.\"",
+                source: "Odontogenic Infections slide deck PDF, slide 52: 'Actinomycosis direct spread thru tissue, skin, bone... draining sinuses... \"sulfur\" granules... Actinomyces israelii'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO3: Outline the classic signs of major head and neck space infections.",
+                question: "A 10-year-old boy presents to the emergency department with severe difficulty swallowing and breathing. He has a history of a recent infection in his 2nd mandibular molar. Physical examination reveals a massive, brawny, red swelling in the floor of his mouth that resembles a \"bull frog\", and his tongue is pushed superiorly. He does not have trismus. Which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Actinomycosis",
+                    B: "Alar space infection",
+                    C: "Lemierre's syndrome",
+                    D: "Ludwig's angina",
+                    E: "Retropharyngeal abscess"
+                },
+                correctAnswer: "D",
+                rationale: "Ludwig's angina (supramylohyoid/sublingual space infection) classically presents from a 2nd or 3rd mandibular molar infection. Signs include a brawny red swelling in the floor of the mouth (\"bull frog\" swelling), superior displacement of the tongue causing airway/swallowing problems, and notably, no trismus (because the masticator muscles are not involved).",
+                source: "Odontogenic Infections slide deck PDF, slides 37 & 39: 'Ludwig’s angina brawny red swelling (floor of mouth)... no trismus... swallowing & breathing problems... 2nd or 3rd mandibular molars... \"bull frog\" swelling'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO3: Outline the classic signs of major head and neck space infections.",
+                question: "A 19-year-old man presents with fever, rigors, and severe neck pain that is aggravated by turning his head away from the involved side. Examination reveals swelling below the angle of the mandible and medial displacement of the palatine tonsil. A CT scan demonstrates suppurative thrombophlebitis of the internal jugular vein. Which of the following spaces is primarily involved in this infection?",
+                options: {
+                    A: "Alar space",
+                    B: "Buccal space",
+                    C: "Lateral pharyngeal space",
+                    D: "Retropharyngeal space",
+                    E: "Submental space"
+                },
+                correctAnswer: "C",
+                rationale: "Lateral pharyngeal space infections clinically present with severe neck pain, swelling below the angle of the mandible, medial displacement of the tonsil, and potentially life-threatening complications like suppurative thrombophlebitis of the internal jugular vein (Lemierre's syndrome).",
+                source: "Odontogenic Infections slide deck PDF, slide 47: 'Lateral pharyngeal space infection... fever, chills, marked neck pain (+/- trismus)... medial displacement of tonsil... swelling below mandibular angle... suppurative thrombophlibitis'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO4: Provide a list of the principal microbial pathogens involved in odontogenic infections.",
+                question: "A patient develops a severe, life-threatening descending mediastinitis originating from an odontogenic source. Blood cultures grow an aerobic, microaerophilic Gram-positive organism that is considered the most frequent bacteria isolated in complicated head and neck odontogenic infections. Which of the following is the most likely organism?",
+                options: {
+                    A: "Actinomyces israelii",
+                    B: "Fusobacterium necrophorum",
+                    C: "Peptostreptococcus",
+                    D: "Streptococcus anginosus group",
+                    E: "Veillonella"
+                },
+                correctAnswer: "D",
+                rationale: "The Streptococcus anginosus group (a group of viridans streptococci) are microaerophilic aerobes that are key factors in complicated, severe, life-threatening descending infections (mediastinitis, lung infections) and are the most frequent bacteria in head & neck odontogenic infections.",
+                source: "Odontogenic Infections slide deck PDF, slide 5: 'Streptococcus anginosus group... viridans strep: microaerophilic; part of normal oral flora... key factor in descending infections (mediastinitis, lung infections)... complicated, severe, life-threatening... most frequent bacteria in head & neck odontogenic infections'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO4: Provide a list of the principal microbial pathogens involved in odontogenic infections.",
+                question: "A microbiological analysis of the indigenous oral flora from a periodontal abscess is performed. The flora is composed of a unique, mixed group of microorganisms. Based on the typical ratio of indigenous oral flora in the oropharynx, which of the following best describes the expected composition of this sample?",
+                options: {
+                    A: "Aerobes significantly outnumber anaerobes (8:1)",
+                    B: "Anaerobes and aerobes are present in equal quantities (1:1)",
+                    C: "Anaerobes significantly outnumber aerobes (8:1)",
+                    D: "The flora consists exclusively of strict aerobes",
+                    E: "The flora consists exclusively of strict anaerobes"
+                },
+                correctAnswer: "C",
+                rationale: "The oral cavity is not a single, uniform environment, but as a general rule (a clinical \"Pearl\"), anaerobes vastly outnumber aerobes in the oropharynx by a ratio of 8:1.",
+                source: "Odontogenic Infections slide deck PDF, slide 3: 'Indigenous Oral Flora (overview)... not a single, uniform environment... anaerobes > aerobes (8:1)'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO5: Discuss the approach to antibiotic and surgical therapy for odontogenic infections.",
+                question: "A 33-year-old man presents in severe respiratory distress, with rapidly evolving pain, swelling, and redness beneath his mandible bilaterally. He is toxic-appearing and febrile. X-rays reveal gas in the soft tissue, suggesting an inframylohyoid space infection spreading to the mediastinum. In addition to broad-spectrum intravenous antibiotics, what is the most critical immediate intervention for this patient?",
+                options: {
+                    A: "Administration of oral amoxicillin/clavulanate",
+                    B: "Extraction of the affected teeth only",
+                    C: "Ligation and excision of the internal jugular vein",
+                    D: "Root canal procedure",
+                    E: "Surgical drainage and airway protection"
+                },
+                correctAnswer: "E",
+                rationale: "In severe deep fascial space infections of the head and neck (like Ludwig's angina or inframylohyoid space infections) that threaten the airway or show signs of spreading to the mediastinum, the absolute priority is airway protection combined with urgent surgical drainage and broad-spectrum IV antibiotics.",
+                source: "Odontogenic Infections slide deck PDF, slides 34, 35, & 38: 'Inframylohyoid space... potentially lethal (worsens fast)... airway obstruction... spread to mediastinum... surgical drainage broad-spectrum Abx' and 'Ludwig's angina... airway protection... surgical drainage broad-spectrum Abx'"
+            },
+            {
+                section: "Odontogenic Infections",
+                fullLO: "LO5: Discuss the approach to antibiotic and surgical therapy for odontogenic infections.",
+                question: "A 19-year-old man with severe odynophagia and sepsis is diagnosed with Lemierre's syndrome. Imaging confirms suppurative jugular venous thrombophlebitis, and blood cultures grow Fusobacterium necrophorum. In addition to airway protection and broad-spectrum IV antibiotics with excellent anaerobic coverage, which of the following surgical interventions may be required to manage the source of the septic emboli?",
+                options: {
+                    A: "Bilateral tonsillectomy",
+                    B: "Complete excision of the maxilla",
+                    C: "Ligation and excision of the internal jugular vein",
+                    D: "Mandibular reconstruction",
+                    E: "Root canal of the mandibular molars"
+                },
+                correctAnswer: "C",
+                rationale: "Lemierre's syndrome involves suppurative thrombophlebitis of the internal jugular vein. The approach to surgical therapy for this specific odontogenic/pharyngeal complication may require the ligation and excision of the infected internal jugular vein to prevent further septic pulmonary emboli.",
+                source: "Odontogenic Infections Handout PDF, page 6: 'Lateral pharyngeal space infections... Classic example: Lemierre’s syndrome where suppurative jugular venous thrombosis is main manifestation... Rx: 1. airway protection... 2. ligation & excision of the internal jugular vein 3. broad-spectrum iv antibiotics'"
+            },
+
+            // --- Section 3: Upper Gastrointestinal Pharmacology ---
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO1: Define the strategies to treat an ulcer.",
+                question: "A 60-year-old male with chronic osteoarthritis presents with intense, burning epigastric pain. Endoscopy reveals a gastric ulcer. He admits to taking high doses of ibuprofen (an NSAID) daily for his joint pain. Which of the following medication classes is the drug of choice for healing this ulcer and providing secondary prevention?",
+                options: {
+                    A: "Antacids",
+                    B: "Dopamine-2 receptor antagonists",
+                    C: "Histamine-2 receptor antagonists (H2RAs)",
+                    D: "Mucosal protectants (Sucralfate)",
+                    E: "Proton pump inhibitors (PPIs)"
+                },
+                correctAnswer: "E",
+                rationale: "For NSAID-induced peptic ulcer disease (PUD), Proton Pump Inhibitors (PPIs) are the drug of choice for both healing the ulcer and for secondary prevention. H2RAs are considered inferior to PPIs for this purpose.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 17: 'Treatment Strategies for PUD (NSAID) ❑ PPIs are the drug of choice for healing and secondary prevention ❑H2RAs are inferior to PPIs'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO1: Define the strategies to treat an ulcer.",
+                question: "A 45-year-old woman is diagnosed with peptic ulcer disease. Biopsy and rapid urease testing confirm the presence of Helicobacter pylori. A review of her medical records shows that she has a known penicillin allergy. Her local antibiogram shows high clarithromycin resistance rates (>15%). Which of the following is the initial treatment of choice for this patient?",
+                options: {
+                    A: "Concomitant therapy: PPI + clarithromycin + amoxicillin + metronidazole",
+                    B: "Monotherapy with Bismuth subsalicylate",
+                    C: "Monotherapy with a Proton Pump Inhibitor",
+                    D: "Quadruple therapy: PPI + bismuth subsalicylate + metronidazole + tetracycline",
+                    E: "Triple therapy: PPI + amoxicillin + clarithromycin"
+                },
+                correctAnswer: "D",
+                rationale: "Bismuth Quadruple therapy is the initial treatment of choice if clarithromycin resistance rates are high (>15%) or if the patient has prior macrolide exposure. It is also highly beneficial in patients with a penicillin allergy, as it avoids amoxicillin.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 16: 'Treatment Strategies for PUD (H. pylori)... Bismuth Quadruple: PPI + bismuth subsalicylate + metronidazole + tetracycline x 10-14 days... Clinical Pearls: Initial treatment of choice if clarithromycin resistance rates are high or prior macrolide exposure. Beneficial in patients with penicillin allergy'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO2: Describe the mechanism of action and common side effects of histamine-2 (H2) antagonists, proton-pump inhibitors (PPIs), and mucosal protectants",
+                question: "A 55-year-old man begins taking an over-the-counter medication for mild heartburn. A few months later, he presents to his physician complaining of tender, enlarged breast tissue (gynecomastia). The physician realizes the patient is taking a Histamine-2 Receptor Blocker that is a potent inhibitor of the CYP P-450 system (specifically 3A4/2D6). Which of the following drugs is the patient most likely taking?",
+                options: {
+                    A: "Cimetidine",
+                    B: "Esomeprazole",
+                    C: "Famotidine",
+                    D: "Nizatidine",
+                    E: "Pantoprazole"
+                },
+                correctAnswer: "A",
+                rationale: "Cimetidine is an H2-receptor antagonist that is known for causing gynecomastia (in >4% of users) and is a potent inhibitor of the CYP P-450 system, which distinguishes its side effect profile from other H2RAs like famotidine and nizatidine.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 5: 'Histamine-2 Receptor Blockers (H2RAs)... Cimetidine (Tagament)... Notable Side Effects: >4%: Gynecomastia... Clinical Pearls: Potent inhibitor of CYP P-450 (3A4/2D6)'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO2: Describe the mechanism of action and common side effects of histamine-2 (H2) antagonists, proton-pump inhibitors (PPIs), and mucosal protectants",
+                question: "A 70-year-old woman with a history of severe GERD has been taking omeprazole daily for the past 10 years. Because of the mechanism of action of this medication, long-term use places her at an increased risk for which of the following complications?",
+                options: {
+                    A: "Extrapyramidal symptoms (tardive dyskinesia)",
+                    B: "Fractures due to decreased calcium and magnesium absorption",
+                    C: "Gynecomastia",
+                    D: "Hypercalcemia (milk-alkali syndrome)",
+                    E: "Severe hypotension"
+                },
+                correctAnswer: "B",
+                rationale: "Omeprazole is a Proton Pump Inhibitor (PPI) that irreversibly inhibits the H+/K+ ATPase in gastric parietal cells. Long-term suppression of gastric acid reduces the absorption of Mg2+, Ca2+, iron, and Vitamin B12. This significantly increases the risk of fractures over time.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 6: 'Proton Pump Inhibitors (PPIs)... Omeprazole... Mechanism of Action: Irreversibly inhibits H+/K+ ATPase in gastric parietal cells... Notable Side Effects: Long term use increases fracture risk (↓ Mg2+ and Ca2+ absorption); other vitamin deficiencies (iron, B12); bacterial overgrowth (C. diff, Salmonella)'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO2: Describe the mechanism of action and common side effects of histamine-2 (H2) antagonists, proton-pump inhibitors (PPIs), and mucosal protectants",
+                question: "A patient suffering from traveler's diarrhea takes an over-the-counter mucosal protectant that works by binding to the ulcer base and acting as an anti-secretory agent. The patient returns to the clinic highly concerned because his stool has turned black. Assuming no gastrointestinal bleeding is present, which of the following medications is most likely responsible for this stool discoloration?",
+                options: {
+                    A: "Aluminum hydroxide",
+                    B: "Bismuth subsalicylate",
+                    C: "Calcium carbonate",
+                    D: "Misoprostol",
+                    E: "Sucralfate"
+                },
+                correctAnswer: "B",
+                rationale: "Bismuth subsalicylate is a mucosal protectant that binds to the ulcer base and provides physical protection. A notable, harmless side effect (>10% of users) is stool discoloration (turning the stool black). It also has antibacterial activity and acts as an anti-secretory agent for diarrhea.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 7: 'Mucosal Protectants... Bismuth subsalicylate... Mechanism of Action: Bind to ulcer base, providing physical protection... Notable Side Effects: >10%: Constipation, nausea/vomiting, stool discoloration'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO3: Explain pharmacotherapeutic strategies to treat GERD, PUD, and Zollinger-Ellison Syndrome",
+                question: "A 45-year-old woman presents to the clinic with a 2-year history of gradually worsening heartburn, coughing, and wheezing at night. She has gained 50 lbs over the last two years. She denies any dysphagia, odynophagia, bleeding, anemia, or weight loss. According to the standard treatment algorithm for Gastroesophageal Reflux Disease (GERD) in patients without alarm symptoms, which of the following is the most appropriate initial pharmacologic therapy?",
+                options: {
+                    A: "Botulinum toxin injection to the GE junction",
+                    B: "Daily antacid monotherapy",
+                    C: "Esophageal myotomy",
+                    D: "Proton Pump Inhibitor (PPI) therapy for 8 weeks",
+                    E: "Sucralfate four times daily"
+                },
+                correctAnswer: "D",
+                rationale: "According to the clinical algorithm for managing GERD, if a patient presents without alarm symptoms (dysphagia, odynophagia, bleeding, weight loss, vomiting), the standard initial step is to start Proton Pump Inhibitor (PPI) therapy for 8 weeks.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 15: 'Treatment Strategies for GERD [Algorithm flowchart]: Alarm symptoms: Dysphagia, odynophagia, bleeding, anemia, weight loss, early satiety, vomiting -> No -> Start PPI therapy (8 weeks)'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO3: Explain pharmacotherapeutic strategies to treat GERD, PUD, and Zollinger-Ellison Syndrome",
+                question: "A 50-year-old man is diagnosed with Zollinger-Ellison Syndrome (ZES) due to a gastrinoma located in the duodenum. He has multiple peptic ulcers that have been refractory to standard medical treatment. Which of the following represents the definitive pharmacotherapeutic and procedural strategy to manage this condition?",
+                options: {
+                    A: "H2-receptor antagonists and strict dietary modification",
+                    B: "Metoclopramide and mucosal protectants",
+                    C: "Misoprostol monotherapy",
+                    D: "Proton Pump Inhibitors (PPIs) and surgical resection",
+                    E: "Sildenafil and esophageal dilatation"
+                },
+                correctAnswer: "D",
+                rationale: "Zollinger-Ellison Syndrome is driven by a gastrin-producing tumor (gastrinoma) that causes massive gastric acid hypersecretion and refractory peptic ulcers. The treatment strategy involves high-dose Proton Pump Inhibitors (PPIs) to control acid secretion and surgical resection of the tumor.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 19: 'Zollinger-Ellison Syndrome ❑ PPIs ❑Surgical resection... Triad of ZES: Pancreatic or Duodenal Tumors, Gastric Hypersecretions, Peptic Ulcers'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO4: Explain mechanisms of action of anti-emetics and describe conditions for which they are used.",
+                question: "A 61-year-old woman with breast cancer is undergoing chemotherapy and experiences severe episodes of chemotherapy-induced nausea and vomiting (CINV). She is prescribed the \"gold standard\" anti-emetic medication for this condition. The physician warns her that this medication can cause a prolonged QTc interval. Which of the following describes the mechanism of action of this medication?",
+                options: {
+                    A: "Activates presynaptic CB1 receptors",
+                    B: "Binds to nuclear glucocorticoid receptors",
+                    C: "Inhibits 5-HT3 ion channels",
+                    D: "Inhibits D2 receptors in the chemoreceptor trigger zone",
+                    E: "Inhibits NK-1 receptors in the vomiting center"
+                },
+                correctAnswer: "C",
+                rationale: "The patient is experiencing Chemotherapy-Induced Nausea and Vomiting (CINV) and is prescribed the \"gold standard\" treatment, which is a Serotonin 5-HT3 Antagonist (like Ondansetron). Its mechanism of action is inhibiting the 5-HT3 ion channel (preventing depolarization), and a serious notable side effect is a prolonged QTc interval.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slide 28: 'Serotonin 5-HT3 Antagonists... Ondansetron... Mechanism of Action: Inhibits 5-HT3 ion channel -> inhibits depolarization... Notable Side Effects: Serious: Prolonged QTc interval... Clinical Pearls: Ondansetron is the “gold standard” for prevention and treatment of CINV and PONV'"
+            },
+            {
+                section: "Upper Gastrointestinal Pharmacology",
+                fullLO: "LO4: Explain mechanisms of action of anti-emetics and describe conditions for which they are used.",
+                question: "A patient receives an anti-emetic medication that functions as a D2 receptor antagonist in the chemoreceptor trigger zone (CTZ). It acts as a prokinetic agent by increasing resting tone, contractility, and lower esophageal sphincter tone to promote gastric emptying. If given chronically, this medication carries a risk of inducing severe extrapyramidal side effects such as tardive dyskinesia. Which of the following medications fits this profile?",
+                options: {
+                    A: "Aprepitant",
+                    B: "Dexamethasone",
+                    C: "Dimenhydrinate",
+                    D: "Metoclopramide",
+                    E: "Scopolamine"
+                },
+                correctAnswer: "D",
+                rationale: "Metoclopramide is a Dopamine-2 (D2) receptor antagonist and prokinetic agent. By inhibiting D2 receptors in the CTZ, it reduces nausea. However, because it blocks dopamine receptors, it can cause severe side effects such as neuroleptic malignant syndrome and tardive dyskinesia.",
+                source: "Upper Gastrointestinal Pharmacology PDF, slides 12 & 28: 'Prokinetic Agents... Metoclopramide... Mechanism of Action: D2 receptor antagonist. ↑ resting tone, contractility, lower esophageal sphincter tone, motility. Promotes gastric emptying... Notable Side Effects: Serious: neuroleptic malignant syndrome, tardive dyskinesia'"
+            },
+            // --- Section 4: Disorders of Stomach and Esophagus I & II ---
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO1: Describe the pathogenesis and clinical features of esophageal motility disorders.",
+                question: "A 65-year-old retired engineer presents to the clinic with a 1-year history of central chest pain. He vomits and regurgitates foul-smelling, partially digested food that he had eaten the night before. He reports a 60-lb weight loss over the last 6 months. A barium swallow reveals a markedly abnormal, dilated esophagus. The pathogenesis of this patient's condition primarily involves the loss of which of the following?",
+                options: {
+                    A: "Ganglion cells in the myenteric plexus",
+                    B: "Mucosal protective factors",
+                    C: "Parietal cells in the gastric body",
+                    D: "Striated muscle in the upper esophagus",
+                    E: "Surface epithelial cells"
+                },
+                correctAnswer: "A",
+                rationale: "The patient's presentation of regurgitating undigested food from the night before, halitosis, chest pain, and severe weight loss is the classic clinical picture of Achalasia. The pathogenesis of achalasia is the failure of the lower esophageal sphincter to relax due to the loss of ganglion cells in the myenteric plexus of the gastroesophageal junction, along with the loss of VIP and nitric oxide.",
+                source: "Disorders of Stomach and Esophagus I PDF, slides 13 & 14: 'Achalasia... Failure of the lower esophageal sphincter to relax. Due to loss of ganglion cells in the myenteric plexus of the gastroesophageal junction and loss of VIP and nitric oxide' and 'Patient A 65 year old male pt., retired engineer... vomits and regurgitates foul smelling partially digested food that he had eaten the night before'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO1: Describe the pathogenesis and clinical features of esophageal motility disorders.",
+                question: "A 35-year-old female law student presents with a 6-month history of recurrent central chest pain and the sensation of food and cold fluids sticking in her chest. She has no history of heartburn or regurgitation. A barium swallow reveals a \"cork-screw\" appearance of the esophagus. Which of the following is the most appropriate pharmacologic treatment option for this patient's specific motility disorder?",
+                options: {
+                    A: "Botulinum toxin injection",
+                    B: "Calcium channel blockers",
+                    C: "Corticosteroids",
+                    D: "Proton pump inhibitors",
+                    E: "Sucralfate"
+                },
+                correctAnswer: "B",
+                rationale: "The patient is presenting with Diffuse Esophageal Spasm, a non-specific motor disorder characterized by non-propagated motility, chest pain, dysphagia for solids and liquids (especially cold), and a \"cork-screw\" esophagus on barium swallow. Treatment options include nitrates, calcium channel blockers, and esophageal dilatation.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 10: 'Diffuse esophageal Spasm • Non-specific motor disorder. • Non propagated motility. • patients present with chest pain, dysphagia for solids and liquids (esp. cold)... Tests: Barium swallow (cork-screw esophagus)... Treatment options: Nitrates, Ca+ channel blockers, esophageal dilatation.'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO2: Describe the pathogenesis, clinical features and complications of gastroesophageal reflux and complications and principles of management.",
+                question: "A 45-year-old female presents to the clinic with a 2-year history of gradually worsening heartburn. She frequently wakes up at night with a choking sensation, cough, and wheezing. Her physical examination is entirely normal except for obesity. What is the primary underlying pathogenesis of her esophageal symptoms?",
+                options: {
+                    A: "Destruction of the nerve cells in the myenteric plexus",
+                    B: "Hypersecretion of gastric acid from a gastrinoma",
+                    C: "Inappropriate relaxation of the lower esophageal sphincter",
+                    D: "Infection by Helicobacter pylori",
+                    E: "Non-propagated motility of the esophageal body"
+                },
+                correctAnswer: "C",
+                rationale: "The patient is presenting with classic symptoms of Gastroesophageal Reflux Disease (GERD), including heartburn, choking, nocturnal cough, and wheezing. The primary pathogenesis of GERD is the inappropriate relaxation of the lower esophageal sphincter (LES).",
+                source: "Disorders of Stomach and Esophagus I PDF, slides 23 & 24: 'Gastroesophageal reflux... A 45 year old female pt. presents to your clinic with a 2 yr. history of gradually worsening heartburn. She wakes up at night with choaking sensation, cough and wheezing... Clinical examination normal except for obesity.' and 'Gastroesophageal reflux • Inappropriate relaxation of the lower esophageal sphincter(LES).'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO2: Describe the pathogenesis, clinical features and complications of gastroesophageal reflux and complications and principles of management.",
+                question: "A 50-year-old man with a long history of severe dyspepsia, dysphagia, and heartburn undergoes an upper gastrointestinal endoscopy to evaluate for complications of his condition. The physician is specifically looking for changes to the esophageal mucosa resulting from chronic acid exposure. Which of the following is a recognized complication of this patient's disease?",
+                options: {
+                    A: "Achalasia",
+                    B: "Barrett's esophagus",
+                    C: "Diffuse esophageal spasm",
+                    D: "Nutcracker esophagus",
+                    E: "Scleroderma esophagus"
+                },
+                correctAnswer: "B",
+                rationale: "Chronic gastroesophageal reflux disease (GERD) can lead to several complications due to ongoing acid damage to the esophageal mucosa. These complications include laryngeal symptoms, dental problems, anemia, and Barrett's esophagus.",
+                source: "Disorders of Stomach and Esophagus II PDF, slide 9: 'Manifestations of Reflux Disease & Peptic Ulcers... Reflux Disease... Complications: Laryngeal symptoms, Dental problems, Anemia, Barrett’s esophagus'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO3: Examine the types of and risks for esophageal cancers.",
+                question: "A 62-year-old man presents with progressive dysphagia, noting that he has more difficulty swallowing solids than liquids. He has a history of smoking, obesity, and Barrett's esophagus. An upper endoscopy reveals a neoplastic lesion in the esophagus. Based on his specific risk factors, which of the following is the most likely diagnosis?",
+                options: {
+                    A: "Adenocarcinoma",
+                    B: "Gastrinoma",
+                    C: "Lymphoma",
+                    D: "Melanoma",
+                    E: "Squamous cell carcinoma"
+                },
+                correctAnswer: "A",
+                rationale: "The two main types of esophageal cancer are squamous cell carcinoma and adenocarcinoma. The risk factors specifically associated with adenocarcinoma of the esophagus include smoking, obesity, geographic locations, and Barrett's esophagus.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 44: 'Risk factors for Adenocarcinoma of the esophagus [Diagram pointing to:] Smoking, Obesity, Geographic locations, Barrett’s'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO3: Examine the types of and risks for esophageal cancers.",
+                question: "A 58-year-old man presents with weight loss, chest pain, and dysphagia to solid foods. His medical history is significant for achalasia and a previous corrosive esophagitis injury from childhood. He is diagnosed with squamous cell carcinoma of the esophagus. Which of the following is an additional recognized risk factor for developing this specific type of esophageal cancer?",
+                options: {
+                    A: "Alcohol use",
+                    B: "Barrett's esophagus",
+                    C: "High-fat diet",
+                    D: "Obesity",
+                    E: "Vitamin C deficiency"
+                },
+                correctAnswer: "A",
+                rationale: "Risk factors for esophageal squamous cell cancer include smoking, tylosis, alcohol, radiation, corrosive esophagitis, achalasia, and deficiencies in Vitamin A, riboflavin, or iron. Barrett's esophagus and obesity are risk factors for adenocarcinoma, not squamous cell carcinoma.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 42: 'Risk factors for esophageal Squamous Cell Cancer [Diagram pointing to:] Smoking, Tylosis, Alcohol, Radiation, Corrosive esophagitis, Vit A, riboflavin, iron def., Achalasia'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO1: Describe the pathogenesis and clinical features of esophageal motility disorders.",
+                question: "A 50-year-old woman presents to the clinic to evaluate recurrent episodes of chest pain. A comprehensive cardiac workup is completely negative. During the interview, she also complains of severe bad breath (halitosis) and the regurgitation of her meals shortly after eating. The physician suspects an underlying esophageal motility disorder. According to the typical presentation of these disorders, which of the following additional symptoms is this patient most likely to report?",
+                options: {
+                    A: "Diarrhea",
+                    B: "Hematochezia",
+                    C: "Loss of weight",
+                    D: "Melena",
+                    E: "Right upper quadrant pain"
+                },
+                correctAnswer: "C",
+                rationale: "Typical presentations of an esophageal motility disorder include heartburn, difficulty in swallowing (dysphagia), regurgitation, vomiting, loss of weight, belching, chest pain, and halitosis. Diarrhea, hematochezia, and melena are not classic symptoms of esophageal motility disorders.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 6: 'Typical Presentation of Motility Disorder... Heartburn, Difficulty in swallowing, Regurgitation, Vomiting, Loss of wt., Dysphagia, Belching, Chest pain, Halitosis'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO1: Describe the pathogenesis and clinical features of esophageal motility disorders.",
+                question: "A 65-year-old retired engineer presents with a 1-year history of central chest pain, foul-smelling regurgitation, and a 60-lb weight loss over the last 6 months. His physician strongly suspects achalasia, a disorder characterized by the failure of the lower esophageal sphincter to relax. Which of the following diagnostic tests is most appropriate to include in the evaluation of this specific motility disorder?",
+                options: {
+                    A: "24-hr pH monitoring",
+                    B: "Acid infusion test (Bernstein test)",
+                    C: "Esophageal manometry",
+                    D: "Helicobacter pylori stool antigen test",
+                    E: "Rapid urease test"
+                },
+                correctAnswer: "C",
+                rationale: "For the diagnosis and evaluation of achalasia, the recommended tests include a barium swallow, upper GI endoscopy, esophageal manometry, and a chest x-ray. Tests like 24-hr pH monitoring and the Bernstein (acid infusion) test are primarily used for investigating gastroesophageal reflux disease, not achalasia.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 17: 'Achalasia Tests • Barium swallow • Upper GI endoscopy • Esophageal manometry • Chest X-ray'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO2: Describe the pathogenesis, clinical features and complications of gastroesophageal reflux and complications and principles of management.",
+                question: "A 45-year-old woman with a history of severe gastroesophageal reflux disease (GERD) presents to the clinic. She has not found adequate relief with lifestyle modifications, antacids, or proton pump inhibitors. Her gastroenterologist discusses non-pharmacological, surgical options to manage her severe reflux. Which of the following is an appropriate surgical treatment for this condition?",
+                options: {
+                    A: "Esophageal dilatation",
+                    B: "Esophageal myotomy",
+                    C: "Fundoplication",
+                    D: "Radiofrequency therapy",
+                    E: "Suturing"
+                },
+                correctAnswer: "C",
+                rationale: "Principles of management for GERD include pharmacological treatments (PPIs, H2-receptor antagonists, antacids), endoscopic treatments (suturing, radiofrequency therapy), and surgical treatments. Fundoplication is the specific surgical treatment indicated for GERD.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 32: 'Gastroesophageal Reflux Treatment options... Endoscopic treatment • Suturing • Radiofrequency therapy. Surgical treatment • Fundoplication.'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO2: Describe the pathogenesis, clinical features and complications of gastroesophageal reflux and complications and principles of management.",
+                question: "A 50-year-old man presents to the clinic complaining of chronic heartburn and dyspepsia. The physician is trying to distinguish between gastroesophageal reflux disease (GERD) and peptic ulcer disease based on the patient's symptoms and potential complications. Which of the following complications is classically associated with GERD rather than peptic ulcer disease?",
+                options: {
+                    A: "Bowel obstruction",
+                    B: "Gastric perforation",
+                    C: "Hematochezia",
+                    D: "Laryngeal symptoms",
+                    E: "Melena"
+                },
+                correctAnswer: "D",
+                rationale: "Complications of reflux disease (GERD) include laryngeal symptoms, dental problems, anemia, and Barrett's esophagus. In contrast, complications of peptic ulcers include obstructive symptoms, bleeding, and perforation.",
+                source: "Disorders of Stomach and Esophagus II PDF, slide 9: 'Manifestations of Reflux Disease & Peptic Ulcers... Reflux Disease... Complications: Laryngeal symptoms, Dental problems, Anemia, Barrett’s esophagus'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO3: Examine the types of and risks for esophageal cancers.",
+                question: "A 55-year-old man with a history of tylosis and chronic alcohol consumption presents with a 3-month history of gradually worsening dysphagia. He notes that he struggles with solid foods more than liquids. He also reports a 36-lb weight loss over the last two months. Given his specific risk factors and presentation, which of the following neoplastic conditions is he at the greatest risk of having developed?",
+                options: {
+                    A: "Adenocarcinoma of the esophagus",
+                    B: "Eosinophilic esophagitis",
+                    C: "Gastrinoma",
+                    D: "Mucosa-associated lymphoid tissue (MALT) lymphoma",
+                    E: "Squamous cell carcinoma of the esophagus"
+                },
+                correctAnswer: "E",
+                rationale: "The patient's risk factors (tylosis, alcohol consumption) and clinical features (progressive dysphagia where solids > liquids, significant weight loss) are highly indicative of esophageal squamous cell cancer. Tylosis and alcohol are specific risk factors for squamous cell cancer, distinguishing it from adenocarcinoma, which is linked to Barrett's esophagus, geographic locations, and obesity.",
+                source: "Disorders of Stomach and Esophagus I PDF, slides 42 & 45: 'Risk factors for esophageal Squamous Cell Cancer... Tylosis... Alcohol' and 'Clinical features... Loss of wt... Dysphagia... Solids >liquids'"
+            },
+            {
+                section: "Disorders of Stomach and Esophagus I & II",
+                fullLO: "LO3: Examine the types of and risks for esophageal cancers.",
+                question: "A patient with a newly diagnosed esophageal malignancy undergoes a staging workup to determine therapeutic options. The oncologist explains that because the tumor is advanced and causing obstructive symptoms, they will need to pursue palliative rather than curative therapies. Which of the following is considered a palliative therapeutic option for neoplastic conditions of the esophagus?",
+                options: {
+                    A: "Chemotherapy",
+                    B: "Esophageal dilatation",
+                    C: "Fundoplication",
+                    D: "Radiotherapy",
+                    E: "Stent placement"
+                },
+                correctAnswer: "E",
+                rationale: "Therapeutic options for esophageal neoplastic conditions are divided into curative and palliative strategies. Curative options include chemo/radiotherapy and surgery. Palliative options include stent placement, tumor debulking by LASER, and nutrition.",
+                source: "Disorders of Stomach and Esophagus I PDF, slide 48: 'Neoplastic Conditions Therapeutic options: curative • Chemo/radiotherapy • Surgery Therapeutic options: palliative • Stent • Tumor debulking by LASER • Nutrition'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Digestion and Absorption")) btnText = "Digestion & Absorption";
+                    if (btnText.includes("Odontogenic Infections")) btnText = "Odontogenic Infections";
+                    if (btnText.includes("Upper Gastrointestinal Pharmacology")) btnText = "Upper GI Pharm";
+                    if (btnText.includes("Disorders of Stomach and Esophagus")) btnText = "Stomach & Esophagus Disorders";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
